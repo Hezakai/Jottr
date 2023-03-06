@@ -4,22 +4,24 @@ const fs = require('fs')
 
 const PORT = process.env.PORT || 3001;
 const app = express();
+
 const writeNote = (txtDest, txtBody) =>
   fs.writeFile(txtDest, JSON.stringify(txtBody, null, 4), (err) =>
     err ? console.error(err) : console.info(`${txtDest}`)
   );
 const createNote = (txtBody, file) => {
     fs.readFile(file, 'utf8', (err, data) => {
+      const pData = JSON.parse(data);
       if (err) {
         console.error(err);
       } else {
-        const pData = JSON.parse(data); //move this
         pData.push(txtBody);
         writeNote(file, pData);
       }
     });
   };
 
+  //generates AlphaNumeric ID for each note
 function idGen() {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
@@ -60,7 +62,7 @@ app.post('/api/notes', (req, res) => {
             id: idGen(),
         }; 
         createNote(note, './db/db.json');
-        console.log(note)
+        // res.send(`Note with ID ${id} has been deleted.`)
     } else {
         res.error('Error.  Please try again')
     }    
