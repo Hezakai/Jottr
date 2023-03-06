@@ -8,7 +8,6 @@ const writeNote = (txtDest, txtBody) =>
   fs.writeFile(txtDest, JSON.stringify(txtBody, null, 4), (err) =>
     err ? console.error(err) : console.info(`${txtDest}`)
   );
-
 const createNote = (txtBody, file) => {
     fs.readFile(file, 'utf8', (err, data) => {
       if (err) {
@@ -21,6 +20,15 @@ const createNote = (txtBody, file) => {
     });
   };
 
+function idGen() {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < 8; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+  }
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
@@ -29,7 +37,7 @@ app.use(express.static('public'));
 
 //index
 app.get('/notes', (req, res) => {
-    res.sendFile(path.join(__dirname, '/public/pages/notes.html'));
+    res.sendFile(path.join(__dirname, '/public/notes.html'));
 });
 
 //homepage
@@ -49,7 +57,7 @@ app.post('/api/notes', (req, res) => {
         const note = {
             title,
             text,
-            id: uuid(),
+            id: idGen(),
         }; 
         createNote(note, './db/db.json');
         console.log(note)
