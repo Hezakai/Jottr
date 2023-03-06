@@ -66,6 +66,20 @@ app.post('/api/notes', (req, res) => {
     }    
 })
 
+//BONUS Delete
+app.delete('/api/notes/:id', (req, res) => {
+    const id = req.params.id;
+    fs.readFile('./db/db.json', (err, data) => {
+      if (err) throw err;
+      const notes = JSON.parse(data);
+      const updatedNotes = notes.filter(note => note.id !== id);
+      fs.writeFile('./db/db.json', JSON.stringify(updatedNotes), err => {
+        if (err) throw err;
+        res.send(`Note with ID ${id} has been deleted.`);
+      });
+    });
+  });
+
 //listener w/ log
 app.listen(PORT, () => {
   console.log(`Listening at http://localhost:${PORT}`);
